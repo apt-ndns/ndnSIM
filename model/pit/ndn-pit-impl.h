@@ -91,7 +91,19 @@ public:
 
   virtual Ptr<Entry>
   Create (Ptr<const Interest> header);
-
+    
+  /**
+   *  Added by Yaoqing Liu, create an entry using forwarding Hint
+   */
+  virtual Ptr<Entry>
+  CreateWithFh (Ptr<const Interest> header);
+    
+  /**
+   * Added by Minsheng Zhang, create an entry only using forwarding Hint
+   */
+  virtual Ptr<Entry>
+  CreateByFh (Ptr<const Interest> header);
+    
   virtual void
   MarkErased (Ptr<Entry> entry);
 
@@ -376,6 +388,7 @@ PitImpl<Policy>::Create (Ptr<const Interest> header)
 }
 
 
+
 template<class Policy>
 void
 PitImpl<Policy>::MarkErased (Ptr<Entry> item)
@@ -390,6 +403,87 @@ PitImpl<Policy>::MarkErased (Ptr<Entry> item)
     }
 }
 
+ 
+//Added by Yaoqing Liu
+template<class Policy>
+Ptr<Entry>
+PitImpl<Policy>::CreateWithFh (Ptr<const Interest> header)            
+{
+  NS_LOG_DEBUG (header->GetName ());
+  NS_LOG_INFO ("PiTImpl: "<<header->GetName () << " fh: " << header->GetForwardinghint());
+                
+  //First use interest name to find a fib entry
+  Ptr<fib::Entry> fibEntry = m_fib->LongestPrefixMatchByPfx (header->GetName());
+  if (fibEntry == 0)
+  {
+    // Couldn't find fib entry via interest name, use forwarding hint instead
+    Ptr<fib::Entry> fibEntry_1 = m_fib->LongestPrefixMatchByPfx (header->GetForwardinghint());
+    if(fibEntry_1 == 0)
+      return 0;
+    fibEntry = fibEntry_1;
+      NS_LOG_INFO ("Create pit entry by fh: " << fibEntry->GetPrefix());           
+  }
+  NS_LOG_INFO("FIBEntry: " << fibEntry->GetPrefix());
+  //NS_ASSERT_MSG (fibEntry != 0,
+  //               "There should be at least default route set" <<
+  //               " Prefix = "<< header->GetName() << ", NodeID == " << m_fib->GetObject<Node>()->GetId() << "\n" << *m_fib);
+                
+  Ptr< entry > newEntry = ns3::Create< entry > (boost::ref (*this), header, fibEntry);
+  std::pair< typename super::iterator, bool > result = super::insert (header->GetName (), newEntry);
+  if (result.first != super::end ())
+  {
+    if (result.second)
+    {
+    newEntry->SetTrie (result.first);
+    return newEntry;
+    }
+    else
+    {
+      // should we do anything?
+      // update payload? add new payload?
+      return result.first->payload ();
+    }
+  }
+  else
+    return 0;
+}
+            
+//Added by Minsheng Zhang
+template<class Policy>
+Ptr<Entry>
+PitImpl<Policy>::CreateByFh (Ptr<const Interest> header)
+{
+  NS_LOG_DEBUG (header->GetName ());
+  NS_LOG_INFO ("PiTImpl: "<<header->GetName () << " fh: " << header->GetForwardinghint());
+                            
+  Ptr<fib::Entry> fibEntry = m_fib->LongestPrefixMatchByPfx (header->GetForwardinghint());
+  if(fibEntry == 0)
+    return 0;
+  NS_LOG_INFO ("Create pit entry by fh: " << fibEntry->GetPrefix());
+                    
+  //NS_ASSERT_MSG (fibEntry != 0,
+  //               "There should be at least default route set" <<
+  //               " Prefix = "<< header->GetName() << ", NodeID == " << m_fib->GetObject<Node>()->GetId() << "\n" << *m_fib);
+                
+  Ptr< entry > newEntry = ns3::Create< entry > (boost::ref (*this), header, fibEntry);
+  std::pair< typename super::iterator, bool > result = super::insert (header->GetName (), newEntry);
+  if (result.first != super::end ())
+  {
+    if (result.second)
+    {
+      newEntry->SetTrie (result.first);
+      return newEntry;
+    }
+    else
+    {
+      // should we do anything?
+      // update payload? add new payload?
+      return result.first->payload ();
+    }
+  }
+  else
+    return 0;
+}
 
 template<class Policy>
 void

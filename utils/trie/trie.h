@@ -468,6 +468,20 @@ public:
   {
     payload_ = payload;
   }
+  
+  /* Added By Minsheng Zhang */
+  int
+  numChild()
+  {
+    return children_.size();
+  }
+    
+  trie*
+  GetParent()
+  {
+    return parent_;
+  }
+  /* Added ended */
 
   Key key () const
   {

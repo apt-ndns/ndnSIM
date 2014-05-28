@@ -70,6 +70,17 @@ public:
    */
   virtual Ptr<fib::Entry>
   LongestPrefixMatch (const Interest &interest) = 0;
+    
+  /**
+   * \brief Perform longest prefix match by a prefix, added by Yaoqing Liu
+   *
+   * \todo Implement exclude filters
+   *
+   * \param interest Interest packet header
+   * \returns If entry found a valid iterator (Ptr<fib::Entry>) will be returned, otherwise End () (==0)
+  */
+  virtual Ptr<fib::Entry>
+  LongestPrefixMatchByPfx (const Name &prefix) = 0;    
 
   /**
    * @brief Get FIB entry for the prefix (exact match)

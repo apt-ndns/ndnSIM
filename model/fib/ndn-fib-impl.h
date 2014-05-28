@@ -91,6 +91,12 @@ public:
 
   virtual Ptr<Entry>
   LongestPrefixMatch (const Interest &interest);
+  
+  /**
+   *  longest prefix match by prefix, add by Yaoqing Liu
+   */
+  virtual Ptr<Entry>
+  LongestPrefixMatchByPfx (const Name &prefix);
 
   virtual Ptr<fib::Entry>
   Find (const Name &prefix);

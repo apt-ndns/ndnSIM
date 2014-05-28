@@ -83,6 +83,18 @@ FibImpl::LongestPrefixMatch (const Interest &interest)
     return item->payload ();
 }
 
+Ptr<Entry>
+FibImpl::LongestPrefixMatchByPfx (const Name &prefix)
+{
+  super::iterator item = super::longest_prefix_match (prefix);
+  // @todo use predicate to search with exclude filters
+
+  if (item == super::end ())
+    return 0;
+  else
+    return item->payload ();
+}
+    
 Ptr<fib::Entry>
 FibImpl::Find (const Name &prefix)
 {

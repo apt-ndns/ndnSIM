@@ -126,6 +126,8 @@ def build(bld):
                            ])]
 
     headers.source = [
+	"helper/ndn-mc-stack-helper.h", 
+        "helper/ndn-dm-stack-helper.h", 
         "helper/ndn-stack-helper.h",
         "helper/ndn-app-helper.h",
         "helper/ndn-header-helper.h",
@@ -152,7 +154,7 @@ def build(bld):
         "ndn.cxx/ndn-api-face.h",
 
         "model/cs/ndn-content-store.h",
-
+        
         "model/fib/ndn-fib.h",
         "model/fib/ndn-fib-entry.h",
 
@@ -160,11 +162,20 @@ def build(bld):
         "model/pit/ndn-pit-entry.h",
         "model/pit/ndn-pit-entry-incoming-face.h",
         "model/pit/ndn-pit-entry-outgoing-face.h",
+        
+	
+        "model/dm/ndn-dm.h",
+        "model/dm/ndn-dm-entry.h",
+
+        "model/mc/ndn-mc.h",
+        "model/mc/ndn-mc-entry.h",
 
         "model/fw/ndn-forwarding-strategy.h",
         "model/fw/ndn-fw-tag.h",
+        "model/fw/dmForwarding.h",
+        "model/fw/trForwarding.h",
 
-        "model/wire/ndn-wire.h",
+        "model/wire/ndn-wire.h", 
 
         "utils/ndn-limits.h",
         "utils/ndn-rtt-estimator.h",

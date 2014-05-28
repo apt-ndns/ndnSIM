@@ -87,6 +87,27 @@ public:
   Ptr<const Name>
   GetNamePtr () const;
 
+  /* Add by Minsheng Zhang */
+  /**
+    * @brief set forwarding hint
+  **/
+
+  void
+  SetForwardinghint(Ptr<Name> forwardinghint);
+
+  /**
+    * @brief set forwarding hint
+  **/
+  void
+  SetForwardinghint(const Name &forwardinghint);
+ 
+  /**
+   * @brief get forwarding hint
+   **/
+  const Name&
+  GetForwardinghint () const;
+  /* Add ended */
+
   /**
    * \brief Set Scope
    * Scope limits where the Interest may propagate. 
@@ -235,6 +256,7 @@ private:
   
 private:
   Ptr<Name> m_name;         ///< @brief Interest name
+  Ptr<Name> m_forwardinghint; ///< @brief Forwardinghint name
   uint8_t m_scope;          ///< @brief 0xFF not set, 0 local scope, 1 this host, 2 immediate neighborhood
   Time  m_interestLifetime; ///< @brief InterestLifetime
   uint32_t m_nonce;         ///< @brief Nonce. not used if zero

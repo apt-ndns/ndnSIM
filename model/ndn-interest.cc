@@ -31,6 +31,7 @@ namespace ndn {
 
 Interest::Interest (Ptr<Packet> payload/* = Create<Packet> ()*/)
   : m_name ()
+  , m_forwardinghint (Create<Name>("/"))
   , m_scope (0xFF)
   , m_interestLifetime (Seconds (0))
   , m_nonce (0)
@@ -47,6 +48,7 @@ Interest::Interest (Ptr<Packet> payload/* = Create<Packet> ()*/)
 
 Interest::Interest (const Interest &interest)
   : m_name             (Create<Name> (interest.GetName ()))
+  , m_forwardinghint (Create<Name>("/"))
   , m_scope            (interest.m_scope)
   , m_interestLifetime (interest.m_interestLifetime)
   , m_nonce            (interest.m_nonce)
@@ -84,6 +86,28 @@ Interest::GetNamePtr () const
 {
   return m_name;
 }
+
+/* Add By Minsheng Zhang */
+void 
+Interest::SetForwardinghint(Ptr<Name> forwardinghint)
+{
+  m_forwardinghint = forwardinghint;
+  m_wire = 0;
+}
+
+void
+Interest::SetForwardinghint(const Name &forwardinghint)
+{
+  m_forwardinghint = Create<Name> (forwardinghint);
+  m_wire = 0;
+}
+    
+const Name&
+Interest::GetForwardinghint () const
+{
+  return *m_forwardinghint;
+}
+/* Add ended */
 
 void
 Interest::SetScope (int8_t scope)
@@ -170,6 +194,7 @@ Interest::Print (std::ostream &os) const
   
   return;
   os << "<Interest>\n  <Name>" << GetName () << "</Name>\n";
+  os << "<ForwardingHint>\n  <Name>" << GetForwardinghint () << "</ForwardingHint>";
   if (GetNack ()>0)
     {
       os << "  <NACK>";
@@ -196,5 +221,4 @@ Interest::Print (std::ostream &os) const
 }
 
 } // namespace ndn
-} // namespace ns3
-
+}

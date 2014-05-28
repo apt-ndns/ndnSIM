@@ -121,6 +121,28 @@ public:
   Create (Ptr<const Interest> header) = 0;
 
   /**
+   * @brief Creates a PIT entry for the given forwarding hint in an interest, added by Yaoqing Liu
+   * @param header parsed interest header
+   * @returns iterator to Pit entry. If record could not be created (e.g., limit reached),
+   *          return end() iterator
+   *
+   * Note. This call assumes that the entry does not exist (i.e., there was a Lookup call before)
+   */
+  virtual Ptr<pit::Entry>
+  CreateWithFh (Ptr<const Interest> header) = 0;
+            
+  /**
+   * @brief Creates a PIT entry for the given forwarding hint in an interest, added by Minsheng Zhang
+   * @param header parsed interest header
+   * @returns iterator to Pit entry. If record could not be created (e.g., limit reached),
+   *          return end() iterator
+   *
+   * Note. This call assumes that the entry does not exist (i.e., there was a Lookup call before)
+   */          
+  virtual Ptr<pit::Entry>
+  CreateByFh (Ptr<const Interest> header) = 0;
+
+  /**
    * @brief Mark PIT entry deleted
    * @param entry PIT entry
    *
