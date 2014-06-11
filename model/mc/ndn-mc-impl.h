@@ -80,11 +80,14 @@ public:
   Add (const Ptr<const Name> &prefix, bool hasChild, const Ptr<const Name> &mapping, int32_t priority, int32_t weight);
     
   virtual void
-  AddorUpdate(const Ptr<const Name> &prefix, const Ptr<const Name>&mapping, int32_t priority, int32_t weight);
+  AddorUpdate(std::string &prefix, std::string &mapping, int32_t priority, int32_t weight);
 
-  virtual void
-  Remove (const Ptr<const Name> &prefix);
+  //virtual void
+  //Remove (const Ptr<const Name> &prefix);
   
+  virtual void
+  Remove (const std::string &prefix, const std::string &parentPrefix, bool parentHasChild);
+
   virtual uint32_t
   GetSize () const;
   
@@ -211,10 +214,27 @@ McImpl< Policy > :: Add (const Ptr<const Name> &prefix, bool hasChild, const Ptr
 //These two next operations are for updates.    
 template<class Policy>
 void
-McImpl< Policy >::AddorUpdate(const Ptr<const Name> &prefix, const Ptr<const Name>&mapping, int32_t priority, int32_t weight)
-{}
+McImpl< Policy >::AddorUpdate(std::string &prefix, std::string &mapping, int32_t priority, int32_t weight)
+{
+  Ptr<const Name> p = Create<const Name>(prefix);
+  typename super::iterator mcEntry = super::find_exact (*p);
+  if(mcEntry != super::end())
+  {
+    // update
+    mcEntry->payload()->AddOrUpdateMappingMetric(Create<Name>(mapping), priority, weight);
+  }
+  else
+  {
+    // update the parent's flag.
+    typename super::iterator parentMcEntry = super::longest_prefix_match(*p);
+    if(parentMcEntry != super::end())
+    {
+      parentMcEntry->payload()->SetHasChild(true);
+    } 
+  }
+}
 
-template<class Policy>
+/*template<class Policy>
 void
 McImpl< Policy > :: Remove (const Ptr<const Name> &prefix)
 {
@@ -225,7 +245,27 @@ McImpl< Policy > :: Remove (const Ptr<const Name> &prefix)
     {
       super::erase (mcEntry);
     }
+}*/
+
+template<class Policy>
+void
+McImpl< Policy > :: Remove (const std::string &prefix, const std::string &parentPrefix, bool parentHasChild)
+{
+  Ptr<const Name> p = Create<const Name>(prefix);
+  typename super::iterator mcEntry = super::find_exact (*p);
+  if (mcEntry != super::end ())
+  {
+    super::erase (mcEntry);
+  }
+
+  Ptr<const Name> pp = Create<const Name>(parentPrefix);
+  typename super::iterator parentMcEntry = super::find_exact(*pp);
+  if (parentMcEntry != super::end())
+  {
+    parentMcEntry->payload()->SetHasChild(parentHasChild);
+  }
 }
+
 
 template<class Policy>
 uint32_t  

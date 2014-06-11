@@ -38,11 +38,14 @@ public:
   Add (const Ptr<const Name> &prefix, bool hasChild, const Ptr<const Name> &mapping, int32_t priority, int32_t weight) = 0;
 
   virtual void
-  AddorUpdate(const Ptr<const Name> &prefix, const Ptr<const Name>&mapping, int32_t priority, int32_t weight) = 0;
+  AddorUpdate(std::string &prefix, std::string &mapping, int32_t priority, int32_t weight) = 0;
     
-  virtual void
-  Remove (const Ptr<const Name> &prefix) = 0;
+  //virtual void
+  //Remove (const Ptr<const Name> &prefix) = 0;
   
+  virtual void
+  Remove (const std::string &prefix, const std::string &parentPrefix, bool parentHasChild) = 0;
+    
   virtual uint32_t
   GetSize () const = 0;
   

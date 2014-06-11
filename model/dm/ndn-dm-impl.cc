@@ -104,13 +104,11 @@ DmImpl::FindAllComponents(const Name &prefix)
   return records;
 }
 
-
 Ptr<dm::Entry>
 DmImpl::Add (const Name prefix, const Name &mapping, int32_t priority, int32_t weight)
 {
   return Add(Create<Name>(prefix), Create<Name>(mapping), priority, weight);
 }
-
 
 Ptr<Entry>
 DmImpl::Add (const Ptr<const Name> &prefix,const Ptr<const Name> &mapping, int32_t priority, int32_t weight)
@@ -147,6 +145,20 @@ DmImpl::Remove (const Ptr<const Name> &prefix)
     }
 }
 
+void
+DmImpl::Remove (std::string &prefix, std::string &parentPrefix, bool parentHasChild)
+{
+  Ptr<const Name> p = Create<const Name>(prefix);
+  super::iterator dmEntry = super::find_exact (*p);
+  if (dmEntry != super::end ())
+    {
+      super::erase (dmEntry);
+    }
+
+  super::iterator parentDmEntry = super::longest_prefix_match(*p);
+  parentPrefix = parentDmEntry->payload()->GetPrefix().toUri();
+  parentHasChild = parentDmEntry->numChild(); 
+}
 
 void
 DmImpl::Print (std::ostream &os) const

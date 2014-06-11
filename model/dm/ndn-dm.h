@@ -41,6 +41,9 @@ public:
   // remove the entry from the DM,
   virtual void
   Remove (const Ptr<const Name> &prefix) = 0;
+    
+  virtual void
+  Remove (std::string &prefix, std::string &parentPrefix, bool parentHasChild) = 0;
   
   virtual uint32_t
   GetSize () const = 0;
