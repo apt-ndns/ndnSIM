@@ -234,35 +234,34 @@ McImpl< Policy >::AddorUpdate(std::string &prefix, std::string &mapping, int32_t
   }
 }
 
-/*template<class Policy>
-void
-McImpl< Policy > :: Remove (const Ptr<const Name> &prefix)
-{
-  //NS_LOG_FUNCTION (this->GetObject<Node> ()->GetId () << boost::cref(*prefix));
-
-  typename super::iterator mcEntry = super::find_exact (*prefix);
-  if (mcEntry != super::end ())
-    {
-      super::erase (mcEntry);
-    }
-}*/
-
 template<class Policy>
 void
 McImpl< Policy > :: Remove (const std::string &prefix, const std::string &parentPrefix, bool parentHasChild)
 {
-  Ptr<const Name> p = Create<const Name>(prefix);
-  typename super::iterator mcEntry = super::find_exact (*p);
-  if (mcEntry != super::end ())
+  if(prefix == parentPrefix)
   {
-    super::erase (mcEntry);
+    Ptr<const Name> p = Create<const Name>(prefix);
+    typename super::iterator mcEntry = super::find_exact(*p);
+    if(mcEntry != super::end())
+    {
+      // set the mapping to 0, because actually the node is not deleted, so don't need to reset the haschild flag.
+      mcEntry->payload()->RemoveAll();
+    }  
   }
-
-  Ptr<const Name> pp = Create<const Name>(parentPrefix);
-  typename super::iterator parentMcEntry = super::find_exact(*pp);
-  if (parentMcEntry != super::end())
+  else
   {
-    parentMcEntry->payload()->SetHasChild(parentHasChild);
+    // delete all the nodes between prefix - parentPrefix. and set the parent flag.
+    Ptr<const Name> pp = Create<const Name>(parentPrefix);
+    Ptr<const Name> p = Create<const Name>(prefix);
+    typename super::iterator parentMcEntry = super::find_exact(*pp);
+    if(parentMcEntry != super::end())
+    {
+      parentMcEntry->payload()->SetHasChild(parentHasChild);
+      for(int i=p->size();i>pp->size();i--)
+      {
+        super::erase(p->getPrefix(i));
+      }
+    }
   }
 }
 

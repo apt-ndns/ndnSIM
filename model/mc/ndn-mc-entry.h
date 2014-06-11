@@ -162,6 +162,9 @@ public:
     m_mapping.erase(mapping);
   }
 
+  void
+  RemoveAll();
+
   Ptr<Mc>
   GetMc()
   {

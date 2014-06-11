@@ -102,6 +102,15 @@ Entry::FindBestCandidate ()
   return *result;
 }
 
+void
+Entry::RemoveAll()
+{
+  for(MappingMetricContainer::type::iterator it = m_mapping.begin(); it != m_mapping.end(); ++it)
+  {
+    RemoveMapping(it->GetMapping());
+  }
+}
+
 std::ostream& operator<< (std::ostream& os, const Entry &entry)
 {
   os << *entry.m_prefix;
