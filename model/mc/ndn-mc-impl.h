@@ -94,6 +94,8 @@ public:
   static inline Ptr<Mc>
   GetMc (Ptr<Object> node);
 
+  virtual void
+  PrintTrieStat(std::ostream& os);
 private:
   void
   SetMaxSize (uint32_t maxSize);
@@ -258,6 +260,13 @@ uint32_t
 McImpl< Policy >::GetMaxSize() const
 {
   return this->getPolicy().get_max_size();
+}
+
+template<class Policy>
+void
+McImpl< Policy >::PrintTrieStat(std::ostream& os)
+{
+  super::getTrie().PrintStat(os);
 }
 
 } // namespace mc
