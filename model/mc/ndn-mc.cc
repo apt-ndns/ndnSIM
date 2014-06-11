@@ -23,7 +23,6 @@ Mc::GetTypeId (void)
 std::ostream&
 operator<< (std::ostream& os, const Mc &mc)
 {
-  os << "zenme hui shi !!!!!" << "\n";
   os << "Node " << Names::FindName (mc.GetObject<Node>()) << "\n";
   os << "+-------------+--------------------------------------+\n";
 

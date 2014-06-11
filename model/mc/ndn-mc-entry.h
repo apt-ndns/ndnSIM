@@ -113,9 +113,9 @@ class Entry : public SimpleRefCount<Entry>
 public:
   class NoMapping {};
 
-  Entry (Ptr<Mc> mc, int32_t numChild, const Ptr<const Name> &prefix)
+  Entry (Ptr<Mc> mc, bool hasChild, const Ptr<const Name> &prefix)
   : m_mc (mc)
-  , m_numChild(numChild)
+  , m_hasChild(hasChild)
   , m_prefix (prefix)
   {
   }
@@ -126,16 +126,16 @@ public:
     return *m_prefix; 
   }
 
-  int32_t 
-  GetNumChild() const
+  bool 
+  HasChild() const
   {
-  	return m_numChild;
+  	return m_hasChild;
   }
 
   void
-  SetNumChild(int32_t numChild)
+  SetHasChild(bool hasChild)
   {
-  	m_numChild = numChild;
+  	m_hasChild = hasChild;
   }
 
   MappingMetricContainer::type
@@ -145,7 +145,7 @@ public:
   }
 
   void
-  AddOrUpdateMappingMetric (const Ptr<const Name> &mapping , int32_t priority, int32_t weight);
+  AddOrUpdateMappingMetric (const Ptr<const Name> &mapping, int32_t priority, int32_t weight);
 
   const Name&
   FindBestCandidate ();
@@ -173,7 +173,7 @@ private:
 
 public:
   Ptr<Mc> m_mc;
-  int32_t m_numChild;
+  bool m_hasChild;
   Ptr<const Name> m_prefix;
   MappingMetricContainer::type m_mapping;
 }; 

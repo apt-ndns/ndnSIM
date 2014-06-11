@@ -244,8 +244,8 @@ trForwarding::OnData (Ptr<Face> inFace,
 
     std::string mappingContent;
     std::string mappingprefix;
-    int numC;
-    int numP;
+    bool hasChild; // number of Children
+    int numP; // number of mapping
     std::string mappingInfo;
     int p;
     int w;
@@ -257,12 +257,12 @@ trForwarding::OnData (Ptr<Face> inFace,
       std::stringstream stream(mappingContent);
 
       stream >> mappingprefix;
-      stream >> numC;
+      stream >> hasChild;
       stream >> numP;
       Ptr<const Name> prefix = Create<const Name>(currentName->append(mappingprefix));
 
       if(numP == 0)
-        m_mc->Add(prefix, numC,0,0,0);
+        m_mc->Add(prefix, hasChild,0,0,0);
       else
       {
         for(int j=0;j<numP;j++)
@@ -270,12 +270,12 @@ trForwarding::OnData (Ptr<Face> inFace,
           stream >> mappingInfo;
           stream >> p;
           stream >> w;
-          m_mc->Add(prefix, numC, Create<const Name>(mappingInfo), p, w);
+          m_mc->Add(prefix, hasChild, Create<const Name>(mappingInfo), p, w);
         }
       }
     }
 
-    if(currentName->size() != dataName.size()-2 && numC != 0)
+    if(currentName->size() != dataName.size()-2 && hasChild == true)
     {
       m_mc->Add(Create<const Name>(dataName.getPrefix(currentName->size()+1,2)),0, 0, 0, 0);
     }

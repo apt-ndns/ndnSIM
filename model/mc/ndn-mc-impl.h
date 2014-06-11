@@ -31,8 +31,8 @@ template<class MC>
 class EntryImpl : public Entry
 {
 public:
-  EntryImpl (Ptr<Mc> mc, int32_t numChild, const Ptr<const Name> &prefix)
-  : Entry (mc, numChild, prefix)
+  EntryImpl (Ptr<Mc> mc, bool hasChild, const Ptr<const Name> &prefix)
+  : Entry (mc, hasChild, prefix)
   , item_(0)
   {}
 
@@ -74,10 +74,13 @@ public:
   FindLongestMatch (const Name &prefix);
 
   virtual Ptr<mc::Entry>
-  Add (const Name prefix, int32_t numChild, const Name mapping, int32_t priority, int32_t weight);
+  Add (const Name prefix, bool hasChild, const Name mapping, int32_t priority, int32_t weight);
 
   virtual Ptr<Entry>
-  Add (const Ptr<const Name> &prefix, int32_t numChild, const Ptr<const Name> &mapping, int32_t priority, int32_t weight);
+  Add (const Ptr<const Name> &prefix, bool hasChild, const Ptr<const Name> &mapping, int32_t priority, int32_t weight);
+    
+  virtual void
+  AddorUpdate(const Ptr<const Name> &prefix, const Ptr<const Name>&mapping, int32_t priority, int32_t weight);
 
   virtual void
   Remove (const Ptr<const Name> &prefix);
@@ -156,7 +159,7 @@ McImpl< Policy > :: FindLongestMatch (const Name &prefix)
   if(foundItem == super::getTrie().end())
     return 0;
 
-  if(lastItem->payload()->GetNumChild() != 0 && lastItem->payload()->GetPrefix() != prefix)
+  if(lastItem->payload()->HasChild() == true && lastItem->payload()->GetPrefix() != prefix)
   {
     return 0;
   }
@@ -172,14 +175,14 @@ McImpl< Policy > :: FindLongestMatch (const Name &prefix)
 
 template<class Policy>
 Ptr<mc::Entry>
-McImpl< Policy > :: Add (const Name prefix, int32_t numChild, const Name mapping, int32_t priority, int32_t weight)
+McImpl< Policy > :: Add (const Name prefix, bool hasChild, const Name mapping, int32_t priority, int32_t weight)
 {
-  return Add(Create<Name>(prefix), numChild, Create<Name>(mapping), priority, weight);
+  return Add(Create<Name>(prefix), hasChild, Create<Name>(mapping), priority, weight);
 }
 
 template<class Policy>
 Ptr<Entry>
-McImpl< Policy > :: Add (const Ptr<const Name> &prefix, int32_t numChild, const Ptr<const Name> &mapping, int32_t priority, int32_t weight)
+McImpl< Policy > :: Add (const Ptr<const Name> &prefix, bool hasChild, const Ptr<const Name> &mapping, int32_t priority, int32_t weight)
 {
   //NS_LOG_FUNCTION (this->GetObject<Node> ()->GetId () << boost::cref(*prefix) << numChild << boost::cref(*mapping) << priority << weight);
 
@@ -190,17 +193,24 @@ McImpl< Policy > :: Add (const Ptr<const Name> &prefix, int32_t numChild, const 
     {
       if (result.second)
         {
-          Ptr<EntryImpl<McImpl< Policy > > > newEntry = Create<EntryImpl<McImpl< Policy > > > (this, numChild, prefix);
+          Ptr<EntryImpl<McImpl< Policy > > > newEntry = Create<EntryImpl<McImpl< Policy > > > (this, hasChild, prefix);
           newEntry->SetTrie (result.first);
           result.first->set_payload (newEntry);
         }
       
+      //super::modify (result.first, ll::bind (&Entry::SetHasChild, ll::_1, hasChild));
       super::modify (result.first, ll::bind (&Entry::AddOrUpdateMappingMetric, ll::_1, mapping, priority, weight));
       return result.first->payload ();
     }
   else
     return 0;
 }
+    
+//These two next operations are for updates.    
+template<class Policy>
+void
+McImpl< Policy >::AddorUpdate(const Ptr<const Name> &prefix, const Ptr<const Name>&mapping, int32_t priority, int32_t weight)
+{}
 
 template<class Policy>
 void

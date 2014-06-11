@@ -30,13 +30,16 @@ public:
   virtual Ptr<mc::Entry>
   FindLongestMatch (const Name &prefix) = 0;
 
-  virtual Ptr<mc::Entry>
-  Add (const Name prefix, int32_t numChild, const Name mapping, int32_t priority, int32_t weight) = 0;
-
 // notice the number of child will not change after the initialization.
   virtual Ptr<mc::Entry>
-  Add (const Ptr<const Name> &prefix, int32_t numChild, const Ptr<const Name> &mapping, int32_t priority, int32_t weight) = 0;
+  Add (const Name prefix, bool hasChild, const Name mapping, int32_t priority, int32_t weight) = 0;
 
+  virtual Ptr<mc::Entry>
+  Add (const Ptr<const Name> &prefix, bool hasChild, const Ptr<const Name> &mapping, int32_t priority, int32_t weight) = 0;
+
+  virtual void
+  AddorUpdate(const Ptr<const Name> &prefix, const Ptr<const Name>&mapping, int32_t priority, int32_t weight) = 0;
+    
   virtual void
   Remove (const Ptr<const Name> &prefix) = 0;
   

@@ -38,7 +38,7 @@ struct MappingMetricByMetric
 };
 
 void
-Entry::AddOrUpdateMappingMetric (const Ptr<const Name> &mapping , int32_t priority, int32_t weight)
+Entry::AddOrUpdateMappingMetric (const Ptr<const Name> &mapping, int32_t priority, int32_t weight)
 {
   NS_LOG_FUNCTION (this);
 
@@ -104,7 +104,11 @@ Entry::FindBestCandidate ()
 
 std::ostream& operator<< (std::ostream& os, const Entry &entry)
 {
-	os << *entry.m_prefix << "  " << entry.m_numChild << "  ";
+  os << *entry.m_prefix;
+  if(entry.m_hasChild == true)
+	 os << " has child ";
+  else
+    os <<  " not has child ";
 
   for (MappingMetricContainer::type::index<i_metric>::type::iterator metric =
           entry.m_mapping.get<i_metric> ().begin ();
