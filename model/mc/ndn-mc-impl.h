@@ -80,7 +80,7 @@ public:
   Add (const Ptr<const Name> &prefix, bool hasChild, const Ptr<const Name> &mapping, int32_t priority, int32_t weight);
     
   virtual void
-  AddorUpdate(std::string &prefix, std::string &mapping, int32_t priority, int32_t weight);
+  AddorUpdate(const std::string &prefix,const std::string &mapping, int32_t priority, int32_t weight);
 
   //virtual void
   //Remove (const Ptr<const Name> &prefix);
@@ -214,7 +214,7 @@ McImpl< Policy > :: Add (const Ptr<const Name> &prefix, bool hasChild, const Ptr
 //These two next operations are for updates.    
 template<class Policy>
 void
-McImpl< Policy >::AddorUpdate(std::string &prefix, std::string &mapping, int32_t priority, int32_t weight)
+McImpl< Policy >::AddorUpdate(const std::string &prefix, const std::string &mapping, int32_t priority, int32_t weight)
 {
   Ptr<const Name> p = Create<const Name>(prefix);
   typename super::iterator mcEntry = super::find_exact (*p);
