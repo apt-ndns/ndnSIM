@@ -16,6 +16,7 @@ Author: Minsheng
 #include <boost/lexical_cast.hpp>
 #include <ctime>
 #include <utility>
+#include <vector>
 
 namespace ll = boost::lambda;
 
@@ -105,10 +106,16 @@ Entry::FindBestCandidate ()
 void
 Entry::RemoveAll()
 {
-  for(MappingMetricContainer::type::iterator it = m_mapping.begin(); it != m_mapping.end(); ++it)
-  {
-    RemoveMapping(it->GetMapping());
-  }
+  std::vector<Name> allMappings;
+  for (MappingMetricContainer::type::index<i_metric>::type::iterator metric =
+          m_mapping.get<i_metric> ().begin ();
+       metric != m_mapping.get<i_metric> ().end ();
+       metric++)
+    {
+      allMappings.push_back(metric->GetMapping());
+    }
+  for(int i=0;i<allMappings.size();i++)
+    m_mapping.erase(allMappings[i]);
 }
 
 std::ostream& operator<< (std::ostream& os, const Entry &entry)

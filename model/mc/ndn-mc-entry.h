@@ -157,7 +157,7 @@ public:
   }
 
   void
-  RemoveMapping (const Name mapping)
+  RemoveMapping (Name mapping)
   {
     m_mapping.erase(mapping);
   }
