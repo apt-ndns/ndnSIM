@@ -86,7 +86,8 @@ McStackHelper::SetForwardingStrategy (const std::string &strategy,
                                     const std::string &attr3, const std::string &value3,
                                     const std::string &attr4, const std::string &value4)
 {
-  m_strategyFactory.SetTypeId (strategy);
+  if(strategy != "")
+      m_strategyFactory.SetTypeId (strategy);
   if (attr1 != "")
       m_strategyFactory.Set (attr1, StringValue (value1));
   if (attr2 != "")

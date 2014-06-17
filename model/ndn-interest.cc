@@ -101,7 +101,7 @@ Interest::SetForwardinghint(const Name &forwardinghint)
   m_forwardinghint = Create<Name> (forwardinghint);
   m_wire = 0;
 }
-    
+
 const Name&
 Interest::GetForwardinghint () const
 {

@@ -81,9 +81,6 @@ public:
     
   virtual void
   AddorUpdate(const std::string &prefix,const std::string &mapping, int32_t priority, int32_t weight);
-
-  //virtual void
-  //Remove (const Ptr<const Name> &prefix);
   
   virtual void
   Remove (const std::string &prefix, const std::string &parentPrefix, bool parentHasChild);
@@ -99,6 +96,7 @@ public:
 
   virtual void
   PrintTrieStat(std::ostream& os);
+
 private:
   void
   SetMaxSize (uint32_t maxSize);
@@ -264,7 +262,6 @@ McImpl< Policy > :: Remove (const std::string &prefix, const std::string &parent
     }
   }
 }
-
 
 template<class Policy>
 uint32_t  

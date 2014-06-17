@@ -39,9 +39,6 @@ public:
 
   virtual void
   AddorUpdate(const std::string &prefix, const std::string &mapping, int32_t priority, int32_t weight) = 0;
-    
-  //virtual void
-  //Remove (const Ptr<const Name> &prefix) = 0;
   
   virtual void
   Remove (const std::string &prefix, const std::string &parentPrefix, bool parentHasChild) = 0;

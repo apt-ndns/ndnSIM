@@ -91,7 +91,6 @@ public:
   /**
     * @brief set forwarding hint
   **/
-
   void
   SetForwardinghint(Ptr<Name> forwardinghint);
 

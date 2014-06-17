@@ -31,10 +31,10 @@ Author:  Minsheng Zhang <mzhang4@memphis.edu>
 #include <boost/lambda/lambda.hpp>
 #include <boost/lambda/bind.hpp>
 #include <boost/tuple/tuple.hpp>
-#include <iostream>
 #include <sstream>
 #include <vector>
 #include <ctime>
+#include <fstream>
 
 namespace ll = boost::lambda;
 
@@ -57,12 +57,18 @@ TypeId trForwarding::GetTypeId (void)
     .SetGroupName ("Ndn")
     .SetParent<ForwardingStrategy> ()
     .AddConstructor <trForwarding> ()
+    .AddAttribute ("Filename", "Output file.",
+                   StringValue (""),
+                   MakeStringAccessor (&trForwarding::m_fileName),
+                   MakeStringChecker())
     ;
   return tid;
 }
 
 trForwarding::trForwarding ()
 {
+  m_cachehit = 0;
+  m_cachemiss = 0;
 }
 
 void
@@ -91,6 +97,19 @@ trForwarding::NotifyNewAggregate ()
 void
 trForwarding::DoDispose ()
 {
+  Ptr<Node> node = this->GetObject<Node> ();
+
+  std::ofstream output;
+  output.open(m_fileName,std::ios::app);
+  if(!output.is_open())
+    std::cerr << "Cannot open the file." << std::endl;
+  else
+  {
+    output << node->GetId() << " cache hit: " << m_cachehit << std::endl;
+    output << node->GetId() << " cache miss: " << m_cachemiss << std::endl;
+  }
+  output.close();
+
   m_pit = 0;
   m_contentStore = 0;
   m_fib = 0;
@@ -121,12 +140,14 @@ trForwarding::OnInterest (Ptr<Face> inFace,
     Ptr<mc::Entry> mcEntry = m_mc->FindLongestMatch(interest->GetName());
     if(mcEntry != 0)
     {
+      m_cachehit++;
       Name forwardinghint = mcEntry->FindBestCandidate();
 
       interest->SetForwardinghint(forwardinghint);
     } 
     else  // else change the forwarding hint to /dm and generate a new interest
     {
+      m_cachemiss++;
       interest->SetForwardinghint(Name("/dm"));
       check = 1;
     }
@@ -244,8 +265,8 @@ trForwarding::OnData (Ptr<Face> inFace,
 
     std::string mappingContent;
     std::string mappingprefix;
-    bool hasChild; // number of Children
-    int numP; // number of mapping
+    int numC;
+    int numP;
     std::string mappingInfo;
     int p;
     int w;
@@ -257,12 +278,12 @@ trForwarding::OnData (Ptr<Face> inFace,
       std::stringstream stream(mappingContent);
 
       stream >> mappingprefix;
-      stream >> hasChild;
+      stream >> numC;
       stream >> numP;
       Ptr<const Name> prefix = Create<const Name>(currentName->append(mappingprefix));
 
       if(numP == 0)
-        m_mc->Add(prefix, hasChild,0,0,0);
+        m_mc->Add(prefix, numC,0,0,0);
       else
       {
         for(int j=0;j<numP;j++)
@@ -270,12 +291,12 @@ trForwarding::OnData (Ptr<Face> inFace,
           stream >> mappingInfo;
           stream >> p;
           stream >> w;
-          m_mc->Add(prefix, hasChild, Create<const Name>(mappingInfo), p, w);
+          m_mc->Add(prefix, numC, Create<const Name>(mappingInfo), p, w);
         }
       }
     }
 
-    if(currentName->size() != dataName.size()-2 && hasChild == true)
+    if(currentName->size() != dataName.size()-2 && numC != 0)
     {
       m_mc->Add(Create<const Name>(dataName.getPrefix(currentName->size()+1,2)),0, 0, 0, 0);
     }

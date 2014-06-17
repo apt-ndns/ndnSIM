@@ -105,7 +105,7 @@ Interest::GetSerializedSize (void) const
     1/*version*/ + 1 /*type*/ + 2/*length*/ +
     (4/*nonce*/ + 1/*scope*/ + 1/*nack type*/ + 2/*timestamp*/ +
      NdnSim::SerializedSizeName (m_interest->GetName ()) +
-
+      NdnSim::SerializedSizeName(m_interest->GetForwardinghint())/*forwarding hint*/ +
      (2 +
       (m_interest->GetExclude () == 0 ? 0 : (1 + NdnSim::SerializedSizeExclude (*m_interest->GetExclude ())))
       )/* selectors */ +
@@ -133,6 +133,9 @@ Interest::Serialize (Buffer::Iterator start) const
   
   // rounding timestamp value to seconds
   start.WriteU16 (static_cast<uint16_t> (m_interest->GetInterestLifetime ().ToInteger (Time::S)));
+
+//forwarding hint.
+  NdnSim::SerializeName (start, m_interest->GetForwardinghint());
 
   NdnSim::SerializeName (start, m_interest->GetName ());
 
@@ -168,6 +171,8 @@ Interest::Deserialize (Buffer::Iterator start)
   m_interest->SetNack (i.ReadU8 ());
 
   m_interest->SetInterestLifetime (Seconds (i.ReadU16 ()));
+
+  m_interest->SetForwardinghint (NdnSim::DeserializeName(i));
 
   m_interest->SetName (NdnSim::DeserializeName (i));
   

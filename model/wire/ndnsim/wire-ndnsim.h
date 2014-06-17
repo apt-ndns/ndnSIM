@@ -55,7 +55,6 @@ public:
   static Ptr<Name>
   DeserializeName (Buffer::Iterator &start);
 
-
   enum Selectors {
     SelectorExclude = 0x01
   };

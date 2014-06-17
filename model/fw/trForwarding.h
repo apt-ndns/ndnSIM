@@ -51,6 +51,10 @@ protected:
 
 protected:
   Ptr<Mc> m_mc;
+private:
+  std::string m_fileName;
+  uint64_t m_cachehit;
+  uint64_t m_cachemiss;
 };
 
 } // namespace ndn

@@ -36,12 +36,13 @@ namespace ndnSIM {
  *	     	     Scope 
  *		     InterestLifetime 
  *	     	     Name 
+ *          ForwardingHint
  *	     	     Selectors 
  *	     	     Options
  *
- * Minumum size of the Interest packet: 1 + 4 + 2 + 1 + (2 + 0) + (2 + 0) + (2 + 0) = 14
+ * Minumum size of the Interest packet: 1 + 4 + 2 + 1 + (2 + 0) + (2 + 0) + (2 + 0) + (2 + 0) = 14
  *
- * Maximum size of the Interest packet: 1 + 4 + 2 + 1 + (2 + 65535) + (2 + 65535) + (2 + 65535) = 196619
+ * Maximum size of the Interest packet: 1 + 4 + 2 + 1 + (2 + 65535) + (2 + 65535) + (2 + 65535) + (2 + 65535) = 263156
  *
  * ::
  *
@@ -57,6 +58,12 @@ namespace ndnSIM {
  *        ~                                                               ~
  *        ~                            Name                               ~
  *        |							           |	
+ *        +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+  *        |            Length             |                               |
+ *     |-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+                               |
+ *        ~                                                               ~
+ *        ~                        ForwardingHint                         ~
+ *        |                        |  
  *        +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
  *        |            Length             |                               |
  *        |-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+                               |
@@ -86,7 +93,6 @@ public:
   static Ptr<ndn::Interest>
   FromWire (Ptr<Packet> packet);
   
-  // from Header
   static TypeId GetTypeId (void); 
   virtual TypeId GetInstanceTypeId (void) const; 
   virtual void Print (std::ostream &os) const;
@@ -147,7 +153,6 @@ public:
   static Ptr<ndn::Data>
   FromWire (Ptr<Packet> packet);
   
-  // from Header
   static TypeId GetTypeId (void);
   virtual TypeId GetInstanceTypeId (void) const;
   virtual void Print (std::ostream &os) const;

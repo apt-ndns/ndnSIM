@@ -153,16 +153,32 @@ ForwardingStrategy::OnInterest (Ptr<Face> inFace,
   if (pitEntry == 0)
     {
       similarInterest = false;
-      pitEntry = m_pit->Create (interest);
+      NS_LOG_DEBUG (interest->GetName () << " fh: " << interest->GetForwardinghint());
+      pitEntry = m_pit->CreateWithFh (interest);
+      //pitEntry = m_pit->Create (interest);
+      NS_LOG_INFO ("Create PIT entry with fowarding hint functionality");
       if (pitEntry != 0)
-        {
-          DidCreatePitEntry (inFace, interest, pitEntry);
-        }
+      {
+        DidCreatePitEntry (inFace, interest, pitEntry);
+      }
       else
+      {
+        //Added by Yaoqing Liu, search by forwarding hint, addition start
+        /*NS_LOG_INFO ("Create PIT entry by FH");
+        pitEntry = m_pit->CreateWithFh (interest);
+        if(pitEntry != 0)
         {
-          FailedToCreatePitEntry (inFace, interest);
-          return;
+           DidCreatePitEntry (inFace, interest, pitEntry);
         }
+        else
+        {
+           FailedToCreatePitEntry (inFace, interest);
+        }*/
+        //Addition end
+                    
+        FailedToCreatePitEntry (inFace, interest);//Commented out by Yaoqing Liu
+        return;
+      }
     }
 
   bool isDuplicated = true;
