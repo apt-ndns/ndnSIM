@@ -225,6 +225,19 @@ trForwarding::OnInterest (Ptr<Face> inFace,
     queryInterest->SetForwardinghint(Name("/dm"));
             
     Ptr<pit::Entry> queryPitEntry = m_pit->CreateByFh(queryInterest);
+
+    if (queryPitEntry != 0)
+    {
+      DidCreatePitEntry (inFace, queryInterest, queryPitEntry);
+    }
+    else
+    {
+      FailedToCreatePitEntry (inFace, queryInterest);
+      return;
+    }
+
+    queryPitEntry->AddSeenNonce (queryInterest->GetNonce ());
+
     PropagateInterest (inFace, queryInterest, queryPitEntry);
     queryPitEntry->RemoveIncoming (inFace);  
   }
