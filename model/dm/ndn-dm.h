@@ -42,7 +42,7 @@ public:
   virtual void
   Remove (const Ptr<const Name> &prefix) = 0;
     
-  virtual void
+  virtual bool
   Remove (std::string &prefix, std::string &parentPrefix, bool parentHasChild) = 0;
   
   virtual uint32_t

@@ -145,19 +145,26 @@ DmImpl::Remove (const Ptr<const Name> &prefix)
     }
 }
 
-void
+bool
 DmImpl::Remove (std::string &prefix, std::string &parentPrefix, bool parentHasChild)
 {
+  std::cout << "coming to remove. " <<std::endl;
   Ptr<const Name> p = Create<const Name>(prefix);
   super::iterator dmEntry = super::find_exact (*p);
+  std::cout << "fine here" << std::endl;
   if (dmEntry != super::end ())
     {
+      std::cout << "coming to erase" << std::endl;
       super::erase (dmEntry);
+      super::iterator parentDmEntry = super::longest_prefix_match(*p);
+      parentPrefix = parentDmEntry->payload()->GetPrefix().toUri();
+      parentHasChild = parentDmEntry->numChild(); 
+      return true;
     }
-
-  super::iterator parentDmEntry = super::longest_prefix_match(*p);
-  parentPrefix = parentDmEntry->payload()->GetPrefix().toUri();
-  parentHasChild = parentDmEntry->numChild(); 
+  else
+    {
+      return false;
+    }
 }
 
 void

@@ -76,7 +76,7 @@ public:
 	virtual void
 	Remove (const Ptr<const Name> &prefix);
 
-  virtual void
+  virtual bool
   Remove (std::string &prefix, std::string &parentPrefix, bool parentHasChild);
 
 	virtual uint32_t
