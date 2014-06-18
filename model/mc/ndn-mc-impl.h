@@ -159,7 +159,7 @@ McImpl< Policy > :: FindLongestMatch (const Name &prefix)
   bool reachLast;
   boost::tie (foundItem, reachLast, lastItem) = super::getTrie().find (prefix);
 
-  if(foundItem == super::getTrie().end())
+  if(foundItem == super::getTrie().end() || lastItem->payload()==0)
     return 0;
 
   if(lastItem->payload()->HasChild() == true && lastItem->payload()->GetPrefix() != prefix)
