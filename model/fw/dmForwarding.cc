@@ -116,7 +116,7 @@ dmForwarding::OnInterest (Ptr<Face> inFace,
   m_inInterests (interest, inFace);
   // a filter to do with the query mapping interest.
   Name interestName = interest->GetName();
-  if(interestName.getPrefix(2) == Name("/query/mapping"))
+  if( interestName.size()>2&&interestName.getPrefix(2) == Name("/query/mapping"))
   {
     Name queryName = interestName.getPrefix(interestName.size()-2,2);
     std::vector<boost::tuple<name::Component, int, int, Ptr<dm::Entry> > > records = m_dm->FindAllComponents(queryName);

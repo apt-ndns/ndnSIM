@@ -256,7 +256,7 @@ trForwarding::OnData (Ptr<Face> inFace,
   // Lookup PIT entry
   // filter for data to deal with the query data
   Name dataName = data->GetName();
-  if(dataName.getPrefix(2) == Name("/query/mapping"))
+  if(dataName.size()>2&&dataName.getPrefix(2) == Name("/query/mapping"))
   {
     // operate with the payload and write the corresponding mapping to the mapping cache;
     Ptr<const Packet> payload  = data->GetPayload();

@@ -54,7 +54,7 @@ McStackHelper::McStackHelper ()
   m_contentStoreFactory.SetTypeId ("ns3::ndn::cs::Lru");
   m_fibFactory.         SetTypeId ("ns3::ndn::fib::Default");
   m_pitFactory.         SetTypeId ("ns3::ndn::pit::Persistent");
-  m_mcFactory.          SetTypeId ("ns3::ndn::mc::Lru");
+  m_mcFactory.          SetTypeId ("ns3::ndn::mc::LruApt");
 
   m_netDeviceCallbacks.push_back (std::make_pair (PointToPointNetDevice::GetTypeId (), MakeCallback (&McStackHelper::PointToPointNetDeviceCallback, this)));
 }
@@ -141,7 +141,8 @@ McStackHelper::SetMc (const std::string &mcClass,
                       const std::string &attr3, const std::string &value3,
                       const std::string &attr4, const std::string &value4)
 {
-  m_mcFactory.SetTypeId (mcClass);
+  if(mcClass != "")
+      m_mcFactory.SetTypeId (mcClass);
   if (attr1 != "")
       m_mcFactory.Set (attr1, StringValue (value1));
   if (attr2 != "")
