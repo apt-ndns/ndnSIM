@@ -77,7 +77,7 @@ public:
 	Remove (const Ptr<const Name> &prefix);
 
   virtual bool
-  Remove (std::string &prefix, std::string &parentPrefix, bool parentHasChild);
+  Remove (std::string &prefix, std::string &parentPrefix, bool &parentHasChild);
 
 	virtual uint32_t
 	GetSize () const;
