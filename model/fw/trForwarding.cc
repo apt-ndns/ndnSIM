@@ -57,7 +57,7 @@ TypeId trForwarding::GetTypeId (void)
     .SetGroupName ("Ndn")
     .SetParent<ForwardingStrategy> ()
     .AddConstructor <trForwarding> ()
-    .AddAttribute ("Filename", "Output file.",
+    .AddAttribute ("trForwarding::Filename", "Output file.",
                    StringValue (""),
                    MakeStringAccessor (&trForwarding::m_fileName),
                    MakeStringChecker())
@@ -97,18 +97,21 @@ trForwarding::NotifyNewAggregate ()
 void
 trForwarding::DoDispose ()
 {
-  Ptr<Node> node = this->GetObject<Node> ();
-
-  std::ofstream output;
-  output.open(m_fileName,std::ios::app);
-  if(!output.is_open())
-    std::cerr << "Cannot open the file." << std::endl;
-  else
+  if(m_fileName != "")
   {
-    output << node->GetId() << " cache hit: " << m_cachehit << std::endl;
-    output << node->GetId() << " cache miss: " << m_cachemiss << std::endl;
-  }
-  output.close();
+    Ptr<Node> node = this->GetObject<Node> ();
+
+    std::ofstream output;
+    output.open(m_fileName,std::ios::app);
+    if(!output.is_open())
+      std::cerr << "Cannot open the file: " << m_fileName << std::endl;
+    else
+    {
+      output << node->GetId() << " cache hit: " << m_cachehit << std::endl;
+      output << node->GetId() << " cache miss: " << m_cachemiss << std::endl;
+    }
+    output.close();
+  } 
 
   m_pit = 0;
   m_contentStore = 0;

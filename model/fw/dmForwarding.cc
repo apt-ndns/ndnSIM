@@ -31,6 +31,7 @@ Author: Minsheng Zhang
 #include <boost/lambda/bind.hpp>
 #include <boost/tuple/tuple.hpp>
 #include <iostream>
+#include <fstream>
 #include <vector>
 #include <boost/multi_index_container.hpp>
 #include <boost/multi_index/tag.hpp>
@@ -62,12 +63,17 @@ TypeId dmForwarding::GetTypeId (void)
     .SetGroupName ("Ndn")
     .SetParent<ForwardingStrategy> ()
     .AddConstructor <dmForwarding> ()
+    .AddAttribute ("dmForwarding::Filename", "Output file.",
+                   StringValue (""),
+                   MakeStringAccessor (&dmForwarding::m_fileName),
+                   MakeStringChecker())
     ;
   return tid;
 }
 
 dmForwarding::dmForwarding ()
 {
+  m_cacheMissInterest = 0;
 }
 
 dmForwarding::~dmForwarding ()
@@ -100,6 +106,23 @@ dmForwarding::NotifyNewAggregate ()
 void
 dmForwarding::DoDispose ()
 {
+  if(m_fileName != "")
+  {
+    Ptr<Node> node = this->GetObject<Node> ();
+
+    std::ofstream output;
+    output.open(m_fileName,std::ios::app);
+    if(!output.is_open())
+      std::cerr << "Cannot open the file: " << m_fileName << std::endl;
+    else
+    {
+      output << node->GetId() << " Normal Interest: " << m_normalInterest << std::endl;
+      output << node->GetId() << " Cache Miss Interest: " << m_cacheMissInterest << std::endl;
+      output << node->GetId() << " Query Interest: " << m_queryInterest << std::endl;
+    }
+    output.close();
+  }
+
   m_pit = 0;
   m_contentStore = 0;
   m_fib = 0;
@@ -118,6 +141,7 @@ dmForwarding::OnInterest (Ptr<Face> inFace,
   Name interestName = interest->GetName();
   if( interestName.size()>2&&interestName.getPrefix(2) == Name("/query/mapping"))
   {
+    m_queryInterest++;
     Name queryName = interestName.getPrefix(interestName.size()-2,2);
     std::vector<boost::tuple<name::Component, int, int, Ptr<dm::Entry> > > records = m_dm->FindAllComponents(queryName);
 
@@ -149,8 +173,7 @@ dmForwarding::OnInterest (Ptr<Face> inFace,
     
     Ptr<ndn::Data> mappingdata = Create<ndn::Data>();
     mappingdata->SetName(interestName);
-        
-        
+           
     Ptr<Packet> pkt = Create<Packet> ((uint8_t*) (mappingString.c_str()),mappingString.length()+1);
     mappingdata->SetPayload(pkt);
         
@@ -169,8 +192,13 @@ dmForwarding::OnInterest (Ptr<Face> inFace,
       pitEntry = m_pit->CreateWithFh (interest);
       if(pitEntry == 0)
       {
+        m_cacheMissInterest++;
         interest->SetForwardinghint(m_dm->FindLongestMatch(interest->GetName())->FindBestCandidate());
         pitEntry = m_pit->CreateByFh (interest);
+      }
+      else
+      {
+        m_normalInterest++;
       }
 
       if (pitEntry != 0)

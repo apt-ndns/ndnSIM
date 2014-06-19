@@ -471,6 +471,11 @@ protected:
 
   TracedCallback< Ptr<const pit::Entry> > m_satisfiedInterests;
   TracedCallback< Ptr<const pit::Entry> > m_timedOutInterests;
+  
+protected:
+  uint64_t m_queryInterest;
+  uint64_t m_normalInterest;
+  std::string m_fileName;
 };
 
 } // namespace ndn

@@ -49,6 +49,9 @@ protected:
 
 protected:
   Ptr<Dm> m_dm;
+private:
+  uint64_t m_cacheMissInterest;
+  std::string m_fileName;
 };
 
 } // namespace ndn
