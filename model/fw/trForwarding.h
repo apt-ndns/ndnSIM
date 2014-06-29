@@ -10,6 +10,7 @@ Author: Minsheng Zhang
 #include "ns3/object.h"
 #include "ns3/traced-callback.h"
 #include "ns3/ndn-forwarding-strategy.h"
+#include <vector>
 
 namespace ns3 {
 namespace ndn {
@@ -55,6 +56,8 @@ private:
   std::string m_fileName;
   uint64_t m_cachehit;
   uint64_t m_cachemiss;
+  std::vector <std::string> m_queryInterestLog;
+  //std::vector <uint32_t> m_queryNonceLog;
 };
 
 } // namespace ndn

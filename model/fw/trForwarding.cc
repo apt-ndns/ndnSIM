@@ -220,6 +220,7 @@ trForwarding::OnInterest (Ptr<Face> inFace,
   if(check == 1)
   {
     Name queryName = Name("/query/mapping") + interest->GetName();
+    m_queryInterestLog.push_back(queryName.toUri());
     Ptr<Interest> queryInterest = Create<Interest>();
     queryInterest->SetName(queryName);
     queryInterest->SetInterestLifetime(interest->GetInterestLifetime());
@@ -255,12 +256,14 @@ trForwarding::OnData (Ptr<Face> inFace,
 {
   NS_LOG_FUNCTION (inFace << data->GetName ());
   m_inData (data, inFace);
-            
+
+  std::vector<std::string>::iterator dataIt = std::find(m_queryInterestLog.begin(),m_queryInterestLog.end(),data->GetName().toUri());
   // Lookup PIT entry
   // filter for data to deal with the query data
   Name dataName = data->GetName();
-  if(dataName.size()>2&&dataName.getPrefix(2) == Name("/query/mapping"))
+  if(dataName.size()>2&&dataName.getPrefix(2) == Name("/query/mapping")&&dataIt != m_queryInterestLog.end())//&&NonceIt != m_queryNonceLog.end())
   {
+    m_queryInterestLog.erase(dataIt);
     // operate with the payload and write the corresponding mapping to the mapping cache;
     Ptr<const Packet> payload  = data->GetPayload();
 
@@ -317,8 +320,8 @@ trForwarding::OnData (Ptr<Face> inFace,
       m_mc->Add(Create<const Name>(dataName.getPrefix(currentName->size()+1,2)),0, 0, 0, 0);
     }
   }
-  else
-  {
+  //else
+  //{
     Ptr<pit::Entry> pitEntry = m_pit->Find (dataName);
     if (pitEntry == 0)
     {
@@ -358,7 +361,7 @@ trForwarding::OnData (Ptr<Face> inFace,
       // Lookup another PIT entry
       pitEntry = m_pit->Lookup (*data);
     }
-  }
+  //}
 }
     
 bool
