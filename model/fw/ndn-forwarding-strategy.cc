@@ -147,7 +147,6 @@ ForwardingStrategy::OnInterest (Ptr<Face> inFace,
 {
   NS_LOG_FUNCTION (inFace << interest->GetName ());
   m_inInterests (interest, inFace);
-  std::cout << this->GetObject<Node>()->GetId() << "  interest coming: " << interest->GetName() << "  " << interest->GetForwardinghint() <<std::endl;
   Ptr<pit::Entry> pitEntry = m_pit->Lookup (*interest);
   bool similarInterest = true;
   if (pitEntry == 0)
