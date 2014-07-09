@@ -64,7 +64,7 @@ public:
 
   static TypeId GetTypeId ();
 
-  McImpl() {};
+  McImpl() {m_seq = 0;};
   virtual ~McImpl() {};
 
   virtual Ptr<Entry>

@@ -100,18 +100,12 @@ TypeId ForwardingStrategy::GetTypeId (void)
                    BooleanValue (true),
                    MakeBooleanAccessor (&ForwardingStrategy::m_detectRetransmissions),
                    MakeBooleanChecker ())
-    .AddAttribute ("Filename", "Output file.",
-                   StringValue (""),
-                   MakeStringAccessor (&ForwardingStrategy::m_fileName),
-                   MakeStringChecker())
     ;
   return tid;
 }
 
 ForwardingStrategy::ForwardingStrategy ()
 {
-  m_queryInterest = 0;
-  m_normalInterest = 0;
 }
 
 ForwardingStrategy::~ForwardingStrategy ()
@@ -140,22 +134,6 @@ ForwardingStrategy::NotifyNewAggregate ()
 void
 ForwardingStrategy::DoDispose ()
 {
- if(m_fileName != "")
-  {
-    Ptr<Node> node = this->GetObject<Node> ();
-
-    std::ofstream output;
-    output.open(m_fileName,std::ios::app);
-    if(!output.is_open())
-      std::cerr << "Cannot open the file: " << m_fileName << std::endl;
-    else
-    {
-      output << node->GetId() << " Normal Interest: " << m_normalInterest << std::endl;
-      output << node->GetId() << " Query Interest: " << m_queryInterest << std::endl;
-    }
-    output.close();
-  }
-
   m_pit = 0;
   m_contentStore = 0;
   m_fib = 0;
@@ -169,12 +147,7 @@ ForwardingStrategy::OnInterest (Ptr<Face> inFace,
 {
   NS_LOG_FUNCTION (inFace << interest->GetName ());
   m_inInterests (interest, inFace);
-
-  if(interest->GetName().size()>2 && interest->GetName().getPrefix(2) == Name("/query/mapping") )
-    m_queryInterest++;
-  else
-    m_normalInterest++;
-  
+  std::cout << this->GetObject<Node>()->GetId() << "  interest coming: " << interest->GetName() << "  " << interest->GetForwardinghint() <<std::endl;
   Ptr<pit::Entry> pitEntry = m_pit->Lookup (*interest);
   bool similarInterest = true;
   if (pitEntry == 0)
@@ -259,7 +232,6 @@ ForwardingStrategy::OnInterest (Ptr<Face> inFace,
     {
       DidForwardSimilarInterest (inFace, interest, pitEntry);
     }
-
   PropagateInterest (inFace, interest, pitEntry);
 }
 

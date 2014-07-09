@@ -19,8 +19,8 @@ Author:  Minsheng Zhang <mzhang4@memphis.edu>
 #include "ns3/point-to-point-helper.h"
 #include "ns3/callback.h"
 
-#include "../model/ndn-net-device-face.h"
-#include "../model/ndn-l3-protocol.h"
+#include "ns3/ndn-net-device-face.h"
+#include "ns3/ndn-l3-protocol.h"
 
 #include "ns3/ndn-forwarding-strategy.h"
 #include "ns3/ndn-fib.h"
@@ -32,7 +32,7 @@ Author:  Minsheng Zhang <mzhang4@memphis.edu>
 #include "ns3/node-list.h"
 #include "ns3/data-rate.h"
 
-#include "ndn-face-container.h"
+#include "ns3/ndn-face-container.h"
 #include "ndn-dm-stack-helper.h"
 
 #include <limits>
@@ -50,7 +50,7 @@ DmStackHelper::DmStackHelper ()
   , m_needSetDefaultRoutes (false)
 {
   m_ndnFactory.         SetTypeId ("ns3::ndn::L3Protocol");
-  m_strategyFactory.    SetTypeId ("ns3::ndn::fw::dmForwarding");
+  m_strategyFactory.    SetTypeId ("ns3::ndn::fw::Flooding");
   m_contentStoreFactory.SetTypeId ("ns3::ndn::cs::Lru");
   m_fibFactory.         SetTypeId ("ns3::ndn::fib::Default");
   m_pitFactory.         SetTypeId ("ns3::ndn::pit::Persistent");

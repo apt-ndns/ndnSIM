@@ -172,8 +172,9 @@ def build(bld):
 
         "model/fw/ndn-forwarding-strategy.h",
         "model/fw/ndn-fw-tag.h",
-        "model/fw/dmForwarding.h",
-        "model/fw/trForwarding.h",
+	"model/fw/smart-flooding.h",
+	"model/fw/green-yellow-red.h",
+	"model/fw/nacks.h",
 
         "model/wire/ndn-wire.h", 
 

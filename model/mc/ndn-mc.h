@@ -52,8 +52,17 @@ public:
   static inline Ptr<Mc>
   GetMc (Ptr<Object> node);
 
+  inline uint64_t 
+  GetSeq ();
+
+  inline void
+  SetSeq(uint64_t seq);
+
 private:
   Mc (const Mc&) {};
+
+protected:
+  uint64_t m_seq;
 }; 
 
 std::ostream& operator<< (std::ostream& os, const Mc &Mc);
@@ -63,6 +72,19 @@ Mc::GetMc (Ptr<Object> node)
 {
   return node->GetObject<Mc> ();
 }
+
+uint64_t
+Mc::GetSeq()
+{
+  return m_seq;
+}
+
+void
+Mc::SetSeq(uint64_t seq)
+{
+  m_seq = seq;
+}
+
 } // namespace ndn
 } // namespace ns3
 
